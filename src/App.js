@@ -1,28 +1,34 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, Fragment } from 'react'
+import { addTodo } from './actions/todo.action'
+import { connect } from 'react-redux'
+
+import AddTodoForm from './components/AddTodoForm'
 
 class App extends Component {
+
+  addTodo = todoContent => this.props.addTodo(todoContent)
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <Fragment>
+        <AddTodoForm addTodo={this.addTodo} />
+        <br />
+        <div>
+        { this.props.todos? 
+          this.props.todos.map((todo, idx) => <p key={idx}>active: {todo.content}</p>)
+          : <p>There are no todos at the moment.</p> }
+        </div>
+      </Fragment>
     );
   }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  todos: state.todos
+})
+
+const mapDispatchToProps = dispatch => ({
+  addTodo: todoContent => dispatch(addTodo(todoContent))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
